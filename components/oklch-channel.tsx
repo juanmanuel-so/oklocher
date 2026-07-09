@@ -29,7 +29,7 @@ export function OklchChannel({
   onChange,
 }: OklchChannelProps) {
   return (
-    <div className="grid gap-2">
+    <div className="grid gap-2 pb-2">
       <div className="flex items-baseline justify-between">
         <Label htmlFor={id} className="text-sm font-medium">
           {label}
@@ -39,7 +39,7 @@ export function OklchChannel({
           {Number.isFinite(value) ? value.toFixed(decimals) : (0).toFixed(decimals)}
         </span>
       </div>
-      <div className="relative">
+      <div className="relative ">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 top-1/2 h-3 -translate-y-1/2 rounded-full border border-border"
@@ -58,7 +58,7 @@ export function OklchChannel({
               onChange(Number(Number(next).toFixed(decimals)))
             }
           }}
-          className="relative [&_[data-slot=slider-track]]:bg-transparent [&_[data-slot=slider-range]]:bg-transparent"
+          className="relative **:data-[slot=slider-track]:bg-transparent **:data-[slot=slider-range]:bg-transparent"
         />
       </div>
     </div>

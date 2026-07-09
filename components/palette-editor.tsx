@@ -42,71 +42,65 @@ export function PaletteEditor() {
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10 md:py-16">
-      <header className="mb-10 flex flex-col gap-3">
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Palette className="size-5" />
-          <span className="text-sm font-medium uppercase tracking-widest">OKLoCHer Studio</span>
-        </div>
-        <h1 className="text-balance text-3xl font-semibold tracking-tight md:text-4xl">
-          Palette editor
-        </h1>
-        <p className="max-w-xl text-pretty leading-relaxed text-muted-foreground">
-          Build and refine a color palette using the perceptually uniform OKLCH color space.
-          Adjust lightness, chroma, and hue, then copy the CSS custom properties into your project.
-        </p>
-      </header>
-
-      <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-        {/* Current palette */}
-        <section aria-labelledby="palette-heading">
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <h2 id="palette-heading" className="text-lg font-medium">
-                Current palette
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                {colors.length} {colors.length === 1 ? "color" : "colors"}
-              </p>
-            </div>
-            <Button variant="outline" size="sm" onClick={copyAll} disabled={colors.length === 0}>
-              {copiedAll ? <Check className="size-4" /> : <Copy className="size-4" />}
-              Copy CSS
-            </Button>
+    <main className="mx-auto w-screen h-dvh px-4 py-10 md:py-16 flex flex-col md:flex-row justify-center items-start md:space-x-10 ">
+      <div>
+        <header className="mb-10 flex flex-col gap-3">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Palette className="size-5" />
+            <span className="text-sm font-medium uppercase tracking-widest">OKLoCHer Studio</span>
           </div>
-
-          {colors.length === 0 ? (
-            <div className="flex h-48 items-center justify-center rounded-xl border border-dashed border-border text-sm text-muted-foreground">
-              Your palette is empty. Add a color to get started.
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-y-4 sm:grid-cols-3">
-              {colors.map((color) => (
-                <ColorCard key={color.id} color={color} onRemove={removeColor} />
-              ))}
-            </div>
-          )}
-
-          {colors.length > 0 && (
-            <pre className="mt-6 overflow-x-auto rounded-xl border border-border bg-muted/50 p-4 font-mono text-xs leading-relaxed text-muted-foreground">
-              <code>{`:root {\n${cssBlock}\n}`}</code>
-            </pre>
-          )}
-        </section>
-
-        {/* Add new color */}
-        <aside>
-          <Card className="sticky top-8">
-            <CardHeader>
-              <CardTitle>Add a color</CardTitle>
-              <CardDescription>Dial in a new OKLCH color.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <AddColorForm onAdd={addColor} />
-            </CardContent>
-          </Card>
-        </aside>
+          <h1 className="text-balance text-3xl font-semibold tracking-tight md:text-4xl">
+            Palette editor
+          </h1>
+          <p className="max-w-xl text-pretty leading-relaxed text-muted-foreground">
+            Build and refine a color palette using the perceptually uniform OKLCH color space.
+            Adjust lightness, chroma, and hue, then copy the CSS custom properties into your project.
+          </p>
+        </header>
+        <Card className="sticky top-8">
+          <CardHeader>
+            
+          </CardHeader>
+          <CardContent>
+            <AddColorForm onAdd={addColor} />
+          </CardContent>
+        </Card>
       </div>
+      <section aria-labelledby="palette-heading" className="flex flex-col justify-center items-start">
+        <div className="w-full mb-4 flex items-center justify-between">
+          <div>
+            <h2 id="palette-heading" className="text-lg font-medium">
+              Current palette
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {colors.length} {colors.length === 1 ? "color" : "colors"}
+            </p>
+          </div>
+          <Button variant="outline" size="sm" onClick={copyAll} disabled={colors.length === 0}>
+            {copiedAll ? <Check className="size-4" /> : <Copy className="size-4" />}
+            Copy CSS
+          </Button>
+        </div>
+
+        {colors.length === 0 ? (
+          <div className="flex h-48 items-center justify-center rounded-xl border border-dashed border-border text-sm text-muted-foreground">
+            Your palette is empty. Add a color to get started.
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-y-4 sm:grid-cols-3">
+            {colors.map((color) => (
+              <ColorCard key={color.id} color={color} onRemove={removeColor} />
+            ))}
+          </div>
+        )}
+
+        {colors.length > 0 && (
+          <pre className="w-full  mt-6 overflow-x-auto  border border-border bg-muted/50 p-4 font-mono text-xs leading-relaxed text-muted-foreground">
+            <code>{`:root {\n${cssBlock}\n}`}</code>
+          </pre>
+        )}
+      </section>
+
     </main>
   )
 }

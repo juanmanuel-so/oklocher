@@ -9,11 +9,16 @@ import {
   createId,
   C_MAX,
   H_MAX,
+  oklchToRgb,
+  rgbToString,
+  rgbToStringSharp,
 } from "@/lib/oklch"
 import { OklchChannel } from "@/components/oklch-channel"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { CardDescription, CardTitle } from "./ui/card"
+import { ArrowsRightLeftIcon } from "@heroicons/react/16/solid"
 
 type Draft = Pick<OklchColor, "l" | "c" | "h">
 
@@ -46,60 +51,74 @@ export function AddColorForm({ onAdd }: AddColorFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="grid gap-5">
-      <div
-        className="flex h-32 flex-col justify-end rounded-xl border border-border p-4"
-        style={{ backgroundColor: css, color: textColor }}
-      >
-        <span className="text-xs font-medium uppercase tracking-wide opacity-80">Live preview</span>
-        <span className="font-mono text-sm">{css}</span>
-      </div>
+      <div className="flex flex-row items-center justify-center h-56 space-x-4">
 
-      <div className="grid gap-2">
-        <Label htmlFor="color-name">Color name</Label>
-        <Input
-          id="color-name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. Brand Blue"
-        />
-      </div>
+        <div className="h-full flex flex-col justify-between">
+          <CardTitle>Add a color</CardTitle>
+          <CardDescription>Dial in a new OKLCH color.</CardDescription>
+          <div className="grid space-y-2">
+            <Label htmlFor="color-name">Color name</Label>
+            <Input
+              id="color-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Brand Blue"
+            />
+          </div>
 
-      <OklchChannel
-        id="channel-l"
-        label="Lightness"
-        hint="0 – 1"
-        value={draft.l}
-        min={0}
-        max={1}
-        step={0.005}
-        decimals={3}
-        trackGradient={lTrack}
-        onChange={(l) => update({ l })}
-      />
-      <OklchChannel
-        id="channel-c"
-        label="Chroma"
-        hint={`0 – ${C_MAX}`}
-        value={draft.c}
-        min={0}
-        max={C_MAX}
-        step={0.005}
-        decimals={3}
-        trackGradient={cTrack}
-        onChange={(c) => update({ c })}
-      />
-      <OklchChannel
-        id="channel-h"
-        label="Hue"
-        hint={`0 – ${H_MAX}`}
-        value={draft.h}
-        min={0}
-        max={H_MAX}
-        step={1}
-        decimals={0}
-        trackGradient={hTrack}
-        onChange={(h) => update({ h })}
-      />
+          <OklchChannel
+            id="channel-l"
+            label="Lightness"
+            hint="0 – 1"
+            value={draft.l}
+            min={0}
+            max={1}
+            step={0.005}
+            decimals={3}
+            trackGradient={lTrack}
+            onChange={(l) => update({ l })}
+          />
+          <OklchChannel
+            id="channel-c"
+            label="Chroma"
+            hint={`0 – ${C_MAX}`}
+            value={draft.c}
+            min={0}
+            max={C_MAX}
+            step={0.005}
+            decimals={3}
+            trackGradient={cTrack}
+            onChange={(c) => update({ c })}
+          />
+          <OklchChannel
+            id="channel-h"
+            label="Hue"
+            hint={`0 – ${H_MAX}`}
+            value={draft.h}
+            min={0}
+            max={H_MAX}
+            step={1}
+            decimals={0}
+            trackGradient={hTrack}
+            onChange={(h) => update({ h })}
+          />
+        </div>
+        <div
+          className="flex h-full flex-col justify-end border border-border p-4 w-2/3"
+          style={{ backgroundColor: css, color: textColor }}
+        >
+          <span className="text-xs font-medium uppercase tracking-wide opacity-80">Live preview</span>
+          <span className="font-mono text-sm">{css}</span>
+        </div>
+
+
+
+      </div>
+      <div className="flex flex-row items-center justify-between space-x-4">
+        <Input placeholder="oklch(0 0 0)" value={css}/>
+        <ArrowsRightLeftIcon className="size-8" />
+        <Input placeholder="#000000" value={rgbToStringSharp(oklchToRgb(draft))} />
+      </div>
 
       <Button type="submit" className="w-full">
         <Plus className="size-4" />

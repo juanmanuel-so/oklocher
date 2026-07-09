@@ -23,7 +23,7 @@ export function ColorCard({ color, onRemove }: ColorCardProps) {
   }
 
   return (
-    <div className="group overflow-hidden border-v border-border bg-card shadow-sm">
+    <div className="group overflow-hidden border-v border-border bg-card">
       <div
         className="flex h-28 items-start justify-end p-2"
         style={{ backgroundColor: css, color: textColor }}
@@ -38,7 +38,7 @@ export function ColorCard({ color, onRemove }: ColorCardProps) {
           <Trash2 className="size-4" />
         </button>
       </div>
-      <div className="flex items-center justify-between gap-2 p-3">
+      <div className="flex items-center justify-between gap-2 p-3  border shadow-md">
         <div className="min-w-0">
           <p className="truncate text-sm font-medium text-card-foreground">{color.name}</p>
           <p className="truncate font-mono text-xs text-muted-foreground">{css}</p>
