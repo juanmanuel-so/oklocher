@@ -1,4 +1,4 @@
-import { converter } from "culori";
+import { converter, toGamut } from "culori";
 import { parse } from "culori"
 
 export interface OklchColor {
@@ -54,13 +54,15 @@ export function oklchToRgb(color: {
   h: number;
   a?: number;
 }) {
-  const rgb = toRgb({
-    mode: "oklch",
-    l: color.l,
-    c: color.c,
-    h: color.h,
-    alpha: color.a,
-  });
+  const rgb = toRgb(
+    toGamut("rgb", "oklch")({
+      mode: "oklch",
+      l: color.l,
+      c: color.c,
+      h: color.h,
+      alpha: color.a,
+    })
+  )
 
   if (!rgb) return {
     r: 0,

@@ -86,7 +86,7 @@ export function PaletteEditor() {
             Your palette is empty. Add a color to get started.
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-y-4 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-y-4 md:grid-cols-3 lg:grid-cols-4">
             {colors.map((color) => (
               <ColorCard key={color.id} color={color} onRemove={removeColor} />
             ))}
