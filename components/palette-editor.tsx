@@ -9,9 +9,7 @@ import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card"
 
 export function PaletteEditor() {
@@ -42,7 +40,8 @@ export function PaletteEditor() {
   }
 
   return (
-    <main className="mx-auto w-screen h-dvh px-4 py-10 md:py-16 flex flex-col md:flex-row justify-center items-start md:space-x-10 ">
+    <main className="mx-auto w-screen h-full px-4 py-10 md:py-16 flex flex-col md:flex-row justify-center items-start md:space-x-10 ">
+      
       <div>
         <header className="mb-10 flex flex-col gap-3">
           <div className="flex items-center gap-2 text-muted-foreground">

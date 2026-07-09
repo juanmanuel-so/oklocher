@@ -1,3 +1,6 @@
+import { converter } from "culori";
+import { parse } from "culori"
+
 export interface OklchColor {
   l: number
   c: number
@@ -6,68 +9,99 @@ export interface OklchColor {
 }
 
 export function oklchValidate(color: string): OklchColor | false {
-  const match = color.trim().match(
-    /^oklch\(\s*(\d+(?:\.\d+)?)%\s+(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)(?:\s*\/\s*(\d+(?:\.\d+)?)(%?))?\s*\)$/i,
-  )
+  const parsed = parse(color)
 
-  if (!match) {
+  if (!parsed || parsed.mode !== "oklch") {
     return false
   }
 
-  const [, l, c, h, alpha, alphaIsPercent] = match
-
-  const result: OklchColor = {
-    l: Number(l),
-    c: Number(c),
-    h: Number(h),
+  return {
+    l: parsed.l,
+    c: parsed.c,
+    h: parsed.h ?? 0,
+    ...(parsed.alpha !== undefined && { a: parsed.alpha }),
   }
-
-  if (alpha !== undefined) {
-    result.a = alphaIsPercent
-      ? Number(alpha) / 100
-      : Number(alpha)
-  }
-
-  // Validaciones de rango
-  if (
-    result.l < 0 ||
-    result.l > 100 ||
-    result.c < 0 ||
-    result.h < 0 ||
-    result.h > 360
-  ) {
-    return false
-  }
-
-  if (
-    result.a !== undefined &&
-    (result.a < 0 || result.a > 1)
-  ) {
-    return false
-  }
-
-  return result
 }
+
 export interface RgbColor {
   r: number
   g: number
   b: number
+  a?: number
 }
 
 export function rgbValidate(color: string): RgbColor | false {
-  const match = color
-    .trim()
-    .match(/^#([A-Fa-f0-9]{6})$/)
+  const parsed = parse(color)
 
-  if (!match) {
+  if (!parsed || parsed.mode !== "rgb") {
     return false
   }
 
-  const hex = match[1]
+  return {
+    r: Math.round(parsed.r * 255),
+    g: Math.round(parsed.g * 255),
+    b: Math.round(parsed.b * 255),
+    ...(parsed.alpha !== undefined ? { a: parsed.alpha } : {}),
+  }
+}
+
+const toRgb = converter("rgb");
+const toOklch = converter("oklch");
+
+export function oklchToRgb(color: {
+  l: number;
+  c: number;
+  h: number;
+  a?: number;
+}) {
+  const rgb = toRgb({
+    mode: "oklch",
+    l: color.l,
+    c: color.c,
+    h: color.h,
+    alpha: color.a,
+  });
+
+  if (!rgb) return {
+    r: 0,
+    g: 0,
+    b: 0,
+    a: 1,
+  };
 
   return {
-    r: Number.parseInt(hex.slice(0, 2), 16),
-    g: Number.parseInt(hex.slice(2, 4), 16),
-    b: Number.parseInt(hex.slice(4, 6), 16),
-  }
+    r: rgb.r * 255,
+    g: rgb.g * 255,
+    b: rgb.b * 255,
+    a: rgb.alpha,
+  };
+}
+
+export function rgbToOklch(color: {
+  r: number;
+  g: number;
+  b: number;
+  a?: number;
+}) {
+  const oklch = toOklch({
+    mode: "rgb",
+    r: color.r / 255,
+    g: color.g / 255,
+    b: color.b / 255,
+    alpha: color.a,
+  });
+
+  if (!oklch) return {
+    l: 0,
+    c: 0,
+    h: 0,
+    a: 1,
+  };
+
+  return {
+    l: oklch.l,
+    c: oklch.c,
+    h: oklch.h ?? 0,
+    a: oklch.alpha,
+  };
 }

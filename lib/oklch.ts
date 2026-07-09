@@ -85,6 +85,7 @@ export function rgbToString({ r, g, b }: { r: number; g: number; b: number }): s
 }
 //to format #000000
 export function rgbToStringSharp({ r, g, b }: { r: number; g: number; b: number }): string {
+
   const rr = Math.round(r).toString(16).padStart(2, "0")
   const gg = Math.round(g).toString(16).padStart(2, "0")
   const bb = Math.round(b).toString(16).padStart(2, "0")

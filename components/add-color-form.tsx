@@ -9,8 +9,6 @@ import {
   createId,
   C_MAX,
   H_MAX,
-  oklchToRgb,
-  rgbToString,
   rgbToStringSharp,
 } from "@/lib/oklch"
 import { OklchChannel } from "@/components/oklch-channel"
@@ -19,6 +17,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { CardDescription, CardTitle } from "./ui/card"
 import { ArrowsRightLeftIcon } from "@heroicons/react/16/solid"
+import { oklchToRgb, oklchValidate, rgbToOklch, rgbValidate } from "@/lib/converter"
+import { DraftableInput } from "./draftable-input"
 
 type Draft = Pick<OklchColor, "l" | "c" | "h">
 
@@ -48,6 +48,30 @@ export function AddColorForm({ onAdd }: AddColorFormProps) {
   const cTrack = `linear-gradient(to right, oklch(${draft.l} 0 ${draft.h}), oklch(${draft.l} ${C_MAX} ${draft.h}))`
   const hTrack =
     "linear-gradient(to right, oklch(0.7 0.18 0), oklch(0.7 0.18 60), oklch(0.7 0.18 120), oklch(0.7 0.18 180), oklch(0.7 0.18 240), oklch(0.7 0.18 300), oklch(0.7 0.18 360))"
+
+  const onOklchBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const value = e.target.value.trim()
+    const parsed = oklchValidate(value)
+    console.log("parsed", parsed)
+    if (parsed) {
+      update(parsed)
+    }
+  }
+  const onRgbBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const value = e.target.value.trim();
+    
+    const parsed = rgbValidate(value);
+    
+    if (!parsed) return;
+
+    const oklch = rgbToOklch(parsed);
+    
+    if (!oklch) return;
+
+    const { l, c, h } = oklch;
+
+    update({ l, c, h });
+  };
 
   return (
     <form onSubmit={handleSubmit} className="grid gap-5">
@@ -115,12 +139,12 @@ export function AddColorForm({ onAdd }: AddColorFormProps) {
 
       </div>
       <div className="flex flex-row items-center justify-between space-x-4">
-        <Input placeholder="oklch(0 0 0)" value={css}/>
+        <DraftableInput placeholder="oklch(0 0 0)" value={css} onBlur={onOklchBlur} />
         <ArrowsRightLeftIcon className="size-8" />
-        <Input placeholder="#000000" value={rgbToStringSharp(oklchToRgb(draft))} />
+        <DraftableInput placeholder="#000000" value={rgbToStringSharp(oklchToRgb(draft))} onBlur={onRgbBlur} />
       </div>
 
-      <Button type="submit" className="w-full">
+      <Button type="submit" className="w-full" >
         <Plus className="size-4" />
         Add to palette
       </Button>
