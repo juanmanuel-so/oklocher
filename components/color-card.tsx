@@ -23,7 +23,7 @@ export function ColorCard({ color, onRemove }: ColorCardProps) {
   }
 
   return (
-    <div className="group overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+    <div className="group overflow-hidden border-v border-border bg-card shadow-sm">
       <div
         className="flex h-28 items-start justify-end p-2"
         style={{ backgroundColor: css, color: textColor }}

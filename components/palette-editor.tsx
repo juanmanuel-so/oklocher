@@ -46,7 +46,7 @@ export function PaletteEditor() {
       <header className="mb-10 flex flex-col gap-3">
         <div className="flex items-center gap-2 text-muted-foreground">
           <Palette className="size-5" />
-          <span className="text-sm font-medium uppercase tracking-widest">OKLCH Studio</span>
+          <span className="text-sm font-medium uppercase tracking-widest">OKLoCHer Studio</span>
         </div>
         <h1 className="text-balance text-3xl font-semibold tracking-tight md:text-4xl">
           Palette editor
@@ -80,7 +80,7 @@ export function PaletteEditor() {
               Your palette is empty. Add a color to get started.
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-y-4 sm:grid-cols-3">
               {colors.map((color) => (
                 <ColorCard key={color.id} color={color} onRemove={removeColor} />
               ))}
