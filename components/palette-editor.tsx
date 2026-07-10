@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import { Check, Copy, Palette } from "lucide-react"
-import { type OklchColor, oklchString, defaultPalette } from "@/lib/oklch"
+import { type OklchColor, oklchString, defaultPalette, interpolateColors } from "@/lib/oklch"
 import { ColorCard } from "@/components/color-card"
 import { AddColorForm } from "@/components/add-color-form"
 import { Button } from "@/components/ui/button"
@@ -17,11 +17,27 @@ export function PaletteEditor() {
   const [copiedAll, setCopiedAll] = useState(false)
 
   function addColor(color: OklchColor) {
+    console.log('adding color ', color)
     setColors((prev) => [...prev, color])
+  }
+  function addColorAfter(index: number, color: OklchColor) {
+    setColors((prev) => {
+      const newColors = [...prev]
+      newColors.splice(index + 1, 0, color)
+      return newColors
+    })
   }
 
   function removeColor(id: string) {
     setColors((prev) => prev.filter((c) => c.id !== id))
+  }
+  function onInterpolate(index: number){
+    console.log('interpolating between', colors[index], colors[index + 1])  
+    const leftColor = colors[index]
+    const rightColor = colors[index + 1]
+    if (!leftColor || !rightColor) return
+    const newColor = interpolateColors(leftColor, rightColor, 0.5)
+    addColorAfter(index, newColor)
   }
 
   const cssBlock = useMemo(
@@ -42,7 +58,7 @@ export function PaletteEditor() {
   return (
     <main className="mx-auto w-screen h-full px-4 py-10 md:py-16 flex flex-col md:flex-row justify-center items-start md:space-x-10 ">
       
-      <div>
+      <div className="min-w-1/3">
         <header className="mb-10 flex flex-col gap-3">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Palette className="size-5" />
@@ -87,9 +103,10 @@ export function PaletteEditor() {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-y-4 md:grid-cols-3 lg:grid-cols-4">
-            {colors.map((color) => (
-              <ColorCard key={color.id} color={color} onRemove={removeColor} />
+            {colors.map((color, index) => (
+              <ColorCard key={color.id} color={color} onRemove={removeColor} onInterpolate={()=>onInterpolate(index)} isLast={index===colors.length-1}/>
             ))}
+            
           </div>
         )}
 

@@ -1,3 +1,5 @@
+import { Color, interpolate } from "culori"
+
 export type OklchColor = {
   id: string
   name: string
@@ -85,11 +87,27 @@ export function rgbToString({ r, g, b }: { r: number; g: number; b: number }): s
 }
 //to format #000000
 export function rgbToStringSharp({ r, g, b }: { r: number; g: number; b: number }): string {
-  console.log('entry',{
-    r,g,b
-  })
   const rr = Math.round(r).toString(16).padStart(2, "0")
   const gg = Math.round(g).toString(16).padStart(2, "0")
   const bb = Math.round(b).toString(16).padStart(2, "0")
   return `#${rr}${gg}${bb}`
+}
+
+export function interpolateColors(c1: OklchColor, c2: OklchColor, t: number): OklchColor {
+  const mix = interpolate(
+    [
+      {l: c1.l, c: c1.c, h: c1.h, mode:'oklch'} as Color, 
+      {l: c2.l, c: c2.c, h: c2.h, mode:'oklch'} as Color
+    ],
+    "oklch",
+  );
+
+  const middle = mix(t);
+  return {
+    id: createId(),
+    name: `Mix of ${c1.name} and ${c2.name}`,
+    l: middle.l,
+    c: middle.c,
+    h: middle.h ?? 0,
+  }
 }

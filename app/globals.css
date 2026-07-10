@@ -48,6 +48,8 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --animate-grow: grow 250ms ease-out;
+  --animate-grow-x: grow-x 250ms ease-out 200ms both;
 }
 
 :root {
@@ -136,5 +138,31 @@
   }
   html {
     @apply font-sans;
+  }
+}
+@theme {
+  --animate-grow: grow 250ms ease-out;
+}
+
+@keyframes grow {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+
+  to {
+    transform: scaleX(1);
+    opacity: 1;
   }
 }
