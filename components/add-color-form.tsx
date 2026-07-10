@@ -139,7 +139,7 @@ export function AddColorForm({ onAdd }: AddColorFormProps) {
               </div>
             )
           }
-          <span className="text-xs font-medium uppercase tracking-wide opacity-80">Live preview</span>
+          <span className="text-xs font-medium uppercase tracking-wide opacity-80">{message?'fallback':'Live Preview'}</span>
           <span className="font-mono text-sm">{css}</span>
         </div>
 
