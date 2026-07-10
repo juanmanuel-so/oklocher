@@ -1,4 +1,4 @@
-import { Color, interpolate } from "culori"
+import { Color, inGamut, interpolate } from "culori"
 
 export type OklchColor = {
   id: string
@@ -35,6 +35,9 @@ export function readableTextColor({ l }: Pick<OklchColor, "l">): string {
   return l > 0.62 ? "oklch(0.15 0 0)" : "oklch(0.98 0 0)"
 }
 
+export function readableDestroyColor({ l }: Pick<OklchColor, "l">): string {
+  return l > 0.62 ? "oklch(0.15 0 0)" : "oklch(0.8081 0.3583 15.55)"
+}
 let counter = 0
 export function createId(): string {
   counter += 1
@@ -96,8 +99,8 @@ export function rgbToStringSharp({ r, g, b }: { r: number; g: number; b: number 
 export function interpolateColors(c1: OklchColor, c2: OklchColor, t: number): OklchColor {
   const mix = interpolate(
     [
-      {l: c1.l, c: c1.c, h: c1.h, mode:'oklch'} as Color, 
-      {l: c2.l, c: c2.c, h: c2.h, mode:'oklch'} as Color
+      { l: c1.l, c: c1.c, h: c1.h, mode: 'oklch' } as Color,
+      { l: c2.l, c: c2.c, h: c2.h, mode: 'oklch' } as Color
     ],
     "oklch",
   );
@@ -109,5 +112,26 @@ export function interpolateColors(c1: OklchColor, c2: OklchColor, t: number): Ok
     l: middle.l,
     c: middle.c,
     h: middle.h ?? 0,
+  }
+}
+export function getProblemMessage(color: {l: number, c:number, h:number, a?: number}): string | false {
+  const parameter = {
+    mode: "oklch",
+    l: color.l,
+    c: color.c,
+    h: color.h,
+  }
+  const srgb = inGamut("rgb")(parameter as Color);
+  const p3 = inGamut("p3")(parameter  as Color);
+  const rec2020 = inGamut("rec2020")(parameter  as Color);
+
+  if (srgb) {
+    return false;
+  } else if (p3) {
+    return "Solo pantallas Display P3";
+  } else if (rec2020) {
+    return "Solo pantallas Rec.2020";
+  } else {
+    return "No reproducible exactamente en dispositivos actuales";
   }
 }

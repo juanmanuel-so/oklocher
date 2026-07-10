@@ -10,6 +10,7 @@ import {
   C_MAX,
   H_MAX,
   rgbToStringSharp,
+  getProblemMessage,
 } from "@/lib/oklch"
 import { OklchChannel } from "@/components/oklch-channel"
 import { Button } from "@/components/ui/button"
@@ -59,20 +60,20 @@ export function AddColorForm({ onAdd }: AddColorFormProps) {
   }
   const onRgbBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const value = e.target.value.trim();
-    
+
     const parsed = rgbValidate(value);
-    
+
     if (!parsed) return;
 
     const oklch = rgbToOklch(parsed);
-    
+
     if (!oklch) return;
 
     const { l, c, h } = oklch;
 
     update({ l, c, h });
   };
-
+  const message = getProblemMessage(draft);
   return (
     <form onSubmit={handleSubmit} className="grid gap-5">
       <div className="flex flex-row items-center justify-center h-56 space-x-4">
@@ -128,9 +129,16 @@ export function AddColorForm({ onAdd }: AddColorFormProps) {
           />
         </div>
         <div
-          className="flex h-full flex-col justify-end border border-border p-4 w-2/3"
+          className="flex h-full flex-col justify-between border border-border p-4 w-2/3 max-w-2/3"
           style={{ backgroundColor: css, color: textColor }}
         >
+          {
+            message && (
+              <div className="text-xs text-rose-600 font-mono rounded-xl p-2 bg-red-100/20 max-w-60">
+                {message}
+              </div>
+            )
+          }
           <span className="text-xs font-medium uppercase tracking-wide opacity-80">Live preview</span>
           <span className="font-mono text-sm">{css}</span>
         </div>
