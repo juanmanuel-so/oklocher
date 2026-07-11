@@ -10,7 +10,7 @@ import {
   C_MAX,
   H_MAX,
   rgbToStringSharp,
-  getProblemMessage,
+  
 } from "@/lib/oklch"
 import { OklchChannel } from "@/components/oklch-channel"
 import { Button } from "@/components/ui/button"
@@ -18,8 +18,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { CardDescription, CardTitle } from "./ui/card"
 import { ArrowsRightLeftIcon } from "@heroicons/react/16/solid"
-import { oklchToRgb, oklchValidate, rgbToOklch, rgbValidate } from "@/lib/converter"
+import { hexToOklch, oklchToRgb, oklchValidate, rgbValidate } from "@/lib/converter"
 import { DraftableInput } from "./draftable-input"
+import { getProblemMessage } from "@/lib/availabity"
 
 type Draft = Pick<OklchColor, "l" | "c" | "h">
 
@@ -53,7 +54,7 @@ export function AddColorForm({ onAdd }: AddColorFormProps) {
   const onOklchBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const value = e.target.value.trim()
     const parsed = oklchValidate(value)
-    console.log("parsed", parsed)
+  
     if (parsed) {
       update(parsed)
     }
@@ -65,10 +66,10 @@ export function AddColorForm({ onAdd }: AddColorFormProps) {
 
     if (!parsed) return;
 
-    const oklch = rgbToOklch(parsed);
+    const oklch = hexToOklch(value);
 
     if (!oklch) return;
-
+    
     const { l, c, h } = oklch;
 
     update({ l, c, h });

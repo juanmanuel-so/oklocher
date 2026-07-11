@@ -1,4 +1,4 @@
-import { Color, inGamut, interpolate } from "culori"
+import { Color, inGamut, interpolate, Oklch } from "culori"
 
 export type OklchColor = {
   id: string
@@ -17,9 +17,9 @@ export const H_MIN = 0
 export const H_MAX = 360
 
 export function oklchString({ l, c, h }: Pick<OklchColor, "l" | "c" | "h">): string {
-  const ll = round(l, 4)
-  const cc = round(c, 4)
-  const hh = round(h, 2)
+  const ll = round(l, 6)
+  const cc = round(c, 6)
+  const hh = round(h, 4)
   return `oklch(${ll} ${cc} ${hh})`
 }
 
@@ -114,24 +114,42 @@ export function interpolateColors(c1: OklchColor, c2: OklchColor, t: number): Ok
     h: middle.h ?? 0,
   }
 }
-export function getProblemMessage(color: {l: number, c:number, h:number, a?: number}): string | false {
-  const parameter = {
-    mode: "oklch",
-    l: color.l,
-    c: color.c,
-    h: color.h,
-  }
-  const srgb = inGamut("rgb")(parameter as Color);
-  const p3 = inGamut("p3")(parameter  as Color);
-  const rec2020 = inGamut("rec2020")(parameter  as Color);
 
-  if (srgb) {
-    return false;
-  } else if (p3) {
-    return "Solo pantallas Display P3";
-  } else if (rec2020) {
-    return "Solo pantallas Rec.2020";
-  } else {
-    return "No reproducible exactamente en dispositivos actuales";
-  }
+const EPS = 1e-4; // swallows FP noise, imperceptible to the eye
+
+function clamp01(v: number) {
+  return Math.min(1, Math.max(0, v));
+}
+
+export function getProblemMessage(color: {
+  l: number;
+  c: number;
+  h: number;
+  a?: number;
+}): string | false {
+  // Sanitize BEFORE gamut checking — clamp, don't round.
+  console.log('checking gamut for', color)
+  const l = clamp01(color.l);
+  const cRaw = Math.max(0, color.c);
+  const c = cRaw < EPS ? 0 : cRaw;
+  const h = c === 0 ? 0 : (((color.h ?? 0) % 360) + 360) % 360;
+
+  const parameter: Oklch = {
+    mode: 'oklch',
+    l,
+    c,
+    h,
+    alpha: color.a ?? 1,
+  };
+
+  const srgb = inGamut('rgb')(parameter as Color);
+  if (srgb) return false;
+
+  const p3 = inGamut('p3')(parameter as Color);
+  if (p3) return 'Solo pantallas Display P3';
+
+  const rec2020 = inGamut('rec2020')(parameter as Color);
+  if (rec2020) return 'Solo pantallas Rec.2020';
+
+  return 'No reproducible exactamente en dispositivos actuales';
 }
